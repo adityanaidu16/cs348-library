@@ -1,0 +1,32 @@
+{% extends "helloworld/base.html" %}
+{% block title %}{{ form_title }}{% endblock %}
+{% block content %}
+<h1>{{ form_title }}</h1>
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="{{ member.name|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" name="age" id="age" value="{{ member.age|default:'' }}" min="1" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="{{ member.email|default:'' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="membership_date">Membership Date</label>
+                <input type="date" name="membership_date" id="membership_date" value="{{ member.membership_date|date:'Y-m-d'|default:'' }}" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'member_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

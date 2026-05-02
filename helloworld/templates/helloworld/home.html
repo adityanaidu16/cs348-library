@@ -1,0 +1,25 @@
+{% extends "helloworld/base.html" %}
+{% block title %}Library System - Home{% endblock %}
+{% block content %}
+<h1>Library Book Lending System</h1>
+<div class="form-row">
+    <div class="card" style="flex:1;">
+        <h2>Books</h2>
+        <p>{{ book_count }} books in the library</p>
+        <br>
+        <a href="{% url 'book_list' %}" class="btn btn-primary">Manage Books</a>
+    </div>
+    <div class="card" style="flex:1;">
+        <h2>Members</h2>
+        <p>{{ member_count }} registered members</p>
+        <br>
+        <a href="{% url 'member_list' %}" class="btn btn-primary">Manage Members</a>
+    </div>
+    <div class="card" style="flex:1;">
+        <h2>Active Loans</h2>
+        <p>{{ active_loans }} books currently checked out</p>
+        <br>
+        <a href="{% url 'loan_list' %}" class="btn btn-primary">View Loans</a>
+    </div>
+</div>
+{% endblock %}

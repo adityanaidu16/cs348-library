@@ -1,0 +1,54 @@
+{% extends "helloworld/base.html" %}
+{% block title %}Members{% endblock %}
+{% block content %}
+<h1>Members</h1>
+<a href="{% url 'member_create' %}" class="btn btn-primary" style="margin-bottom:1rem;">Add Member</a>
+
+<div class="card">
+    <h2>Filter Members</h2>
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            <label for="min_age">Min Age</label>
+            <input type="number" name="min_age" id="min_age" value="{{ min_age|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="max_age">Max Age</label>
+            <input type="number" name="max_age" id="max_age" value="{{ max_age|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+        <div class="form-group">
+            <label>&nbsp;</label>
+            <a href="{% url 'member_list' %}" class="btn btn-secondary">Clear</a>
+        </div>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr><th>ID</th><th>Name</th><th>Age</th><th>Email</th><th>Member Since</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.id }}</td>
+            <td>{{ member.name }}</td>
+            <td>{{ member.age }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.membership_date }}</td>
+            <td class="actions">
+                <a href="{% url 'member_edit' member.id %}" class="btn btn-secondary">Edit</a>
+                <form class="inline" method="post" action="{% url 'member_delete' member.id %}" onsubmit="return confirm('Delete this member?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No members found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

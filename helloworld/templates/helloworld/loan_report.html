@@ -1,0 +1,83 @@
+{% extends "helloworld/base.html" %}
+{% block title %}Loan Report{% endblock %}
+{% block content %}
+<h1>Loan Report</h1>
+
+<div class="card">
+    <h2>Filter Report</h2>
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            <label for="start_date">Due Date From</label>
+            <input type="date" name="start_date" id="start_date" value="{{ start_date|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="end_date">Due Date To</label>
+            <input type="date" name="end_date" id="end_date" value="{{ end_date|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select name="status" id="status">
+                <option value="">All</option>
+                <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+                <option value="overdue" {% if status == 'overdue' %}selected{% endif %}>Overdue</option>
+                <option value="returned" {% if status == 'returned' %}selected{% endif %}>Returned</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+        </div>
+        <div class="form-group">
+            <label>&nbsp;</label>
+            <a href="{% url 'loan_report' %}" class="btn btn-secondary">Clear</a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Summary</h2>
+    <div class="form-row">
+        <div style="flex:1;"><strong>Total Loans:</strong> {{ total }}</div>
+        <div style="flex:1;"><strong class="active">Active:</strong> {{ active_count }}</div>
+        <div style="flex:1;"><strong class="overdue">Overdue:</strong> {{ overdue_count }}</div>
+        <div style="flex:1;"><strong class="returned">Returned:</strong> {{ returned_count }}</div>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr><th>Loan ID</th><th>Member</th><th>Book</th><th>Checkout</th><th>Due Date</th><th>Returned</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for loan in loans %}
+        <tr>
+            <td>{{ loan.id }}</td>
+            <td>{{ loan.member.name }}</td>
+            <td>{{ loan.book.title }}</td>
+            <td>{{ loan.checkout_date }}</td>
+            <td>{{ loan.due_date }}</td>
+            <td>{{ loan.return_date|default:"--" }}</td>
+            <td>
+                {% if loan.return_date %}
+                    <span class="returned">Returned</span>
+                {% elif loan.is_overdue %}
+                    <span class="overdue">Overdue</span>
+                {% else %}
+                    <span class="active">Active</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if not loan.return_date %}
+                <form class="inline" method="post" action="{% url 'loan_return' loan.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Return</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No loans match the filter criteria.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
